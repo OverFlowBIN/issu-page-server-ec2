@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Issue, IssueStatus } from './issues.model';
 import { v1 as uuid } from 'uuid';
 import { CreateIssueDto } from './dto/create-issues.dto';
@@ -37,7 +37,9 @@ export class IssuesService {
   }
 
   getIssueById(id: string): Issue {
-    return this.issues.find((issue) => issue.id === id);
+    const issue = this.issues.find((issue) => issue.id === id);
+    if (!issue) throw new NotFoundException(`Can't find Issue with id ${id}`);
+    return issue;
   }
 
   getIssueByTitle(title: string): Issue {
@@ -45,13 +47,14 @@ export class IssuesService {
   }
 
   deleteIssueById(id: string): Issue[] {
+    const issue = this.getIssueById(id);
+    if (!issue) throw new NotFoundException(`Can't find Issue with id ${id}`);
     return this.issues.filter((issue) => issue.id !== id);
   }
 
-  updateStatusById(id: string): Issue {
+  updateStatusById(id: string, status: IssueStatus): Issue {
     const issue = this.getIssueById(id);
-    issue.status =
-      issue.status === IssueStatus.OPEN ? IssueStatus.CLOSE : IssueStatus.OPEN;
+    issue.status = status;
     return issue;
   }
 

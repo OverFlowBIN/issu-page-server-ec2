@@ -6,10 +6,13 @@ import {
   Patch,
   Body,
   Param,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { IssuesService } from './issues.service';
-import { Issue } from './issues.model';
+import { Issue, IssueStatus } from './issues.model';
 import { CreateIssueDto } from './dto/create-issues.dto';
+import { IssueStatusValidationPipe } from './pipes/issue-status-validation.pipe';
 
 @Controller('issues') // "issues" url 지정
 export class IssuesController {
@@ -29,6 +32,7 @@ export class IssuesController {
 
   /** 이슈 생성하기 */
   @Post('/') // @Post() 파라미터 없는 값과 동일 -> 명시적으로 작성해도 된다
+  @UsePipes(ValidationPipe) // handler-level pipe 적용 시키기
   createIssue(@Body() createIssueDto: CreateIssueDto): Issue {
     return this.issuesService.createIssue(createIssueDto);
   }
@@ -53,8 +57,11 @@ export class IssuesController {
 
   /** id로 특정 이슈 status 변경하기 */
   @Patch('/status/:id')
-  updateStatusById(@Param('id') id: string): Issue {
-    return this.issuesService.updateStatusById(id);
+  updateStatusById(
+    @Param('id') id: string,
+    @Body('status', IssueStatusValidationPipe) status: IssueStatus,
+  ): Issue {
+    return this.issuesService.updateStatusById(id, status);
   }
 
   /** id로 특정 이슈 content 변경하기 */
