@@ -3,7 +3,7 @@ import {
   BadRequestException,
   PipeTransform,
 } from '@nestjs/common';
-import { IssueStatus } from '../issues.model';
+import { IssueStatus } from '../issues.enum';
 
 export class IssueStatusValidationPipe implements PipeTransform {
   readonly statusOptions = [IssueStatus.OPEN, IssueStatus.CLOSE];

@@ -1,5 +1,5 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { IssueStatus } from './issues.model';
+import { IssueStatus } from './issues.enum';
 
 @Entity()
 export class Issue extends BaseEntity {
