@@ -8,6 +8,7 @@ import {
   Param,
   UsePipes,
   ValidationPipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { IssuesService } from './issues.service';
 import { Issue } from './issue.entity';
@@ -44,30 +45,35 @@ export class IssuesController {
     return this.issuesService.getIssueById(id);
   }
 
-  // /** title로 특정 이슈 가져오기 */
-  // @Get('/title/:title')
-  // getIssueByTitle(@Param('title') title: string): Issue {
-  //   return this.issuesService.getIssueByTitle(title);
-  // }
+  /** title로 특정 이슈 가져오기 */
+  @Get('/title/:title')
+  getIssueByTitle(@Param('title') title: string): Promise<Issue> {
+    return this.issuesService.getIssueByTitle(title);
+  }
 
-  // /** id로 특정 이슈 삭제하기 */
-  // @Delete('/id/:id')
-  // deleteIssueById(@Param('id') id: string): Issue[] {
-  //   return this.issuesService.deleteIssueById(id);
-  // }
+  /** id로 특정 이슈 삭제하기 */
+  @Delete('/id/:id')
+  deleteIssueById(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    return this.issuesService.deleteIssueById(id);
+  }
 
-  // /** id로 특정 이슈 status 변경하기 */
-  // @Patch('/status/:id')
-  // updateStatusById(
-  //   @Param('id') id: string,
-  //   @Body('status', IssueStatusValidationPipe) status: IssueStatus,
-  // ): Issue {
-  //   return this.issuesService.updateStatusById(id, status);
-  // }
+  /** id로 특정 이슈 status 변경하기 */
+  @Patch('/status/:id')
+  updateStatusById(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('status', IssueStatusValidationPipe) status: IssueStatus,
+  ): Promise<Issue> {
+    return this.issuesService.updateStatusById(id, status);
+  }
 
-  // /** id로 특정 이슈 content 변경하기 */
-  // @Patch('/content/:id')
-  // updateContentById(@Param('id') id: string, @Body('content') content: string) {
-  //   return this.issuesService.updateContentById(id, content);
-  // }
+  /** id로 특정 이슈 content 변경하기 */
+  @Patch('/content/:id')
+  updateContentById(
+    @Param('id') id: number,
+    @Body('content') content: string,
+  ): Promise<Issue> {
+    return this.issuesService.updateContentById(id, content);
+  }
+
+  // TODO: 제목변경 / 컨텐츠 변경 따로 API 만들기
 }

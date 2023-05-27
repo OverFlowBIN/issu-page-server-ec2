@@ -1,6 +1,5 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { IssueStatus } from './issues.enum';
-import { v1 as uuid } from 'uuid';
 import { CreateIssueDto } from './dto/create-issues.dto';
 import { IssueRepository } from './issue.repository';
 import { Issue } from './issue.entity';
@@ -29,30 +28,41 @@ export class IssuesService {
   }
 
   async getIssueById(id: number): Promise<Issue> {
-    const issue = await this.issueRepository.findOne({ where: { id } });
-    if (!issue) throw new NotFoundException(`Can't find Issue with id ${id}`);
+    try {
+      const issue = await this.issueRepository.findOneOrFail({ where: { id } });
+      return issue;
+    } catch (err) {
+      // TODO: slack 추가하기
+      throw new NotFoundException(`Can't find Issue with id ${id}`);
+    }
+  }
+
+  async getIssueByTitle(title: string): Promise<Issue> {
+    return this.issueRepository.findOne({ where: { title } });
+  }
+
+  async deleteIssueById(id: number) {
+    const deleted = await this.issueRepository.delete(id);
+    if (deleted.affected === 0) {
+      throw new NotFoundException(`Can't find Issue with id ${id}`);
+    }
+  }
+
+  async updateStatusById(id: number, status: IssueStatus): Promise<Issue> {
+    const issue = await this.getIssueById(id);
+
+    issue.status = status;
+    await this.issueRepository.save(issue);
+
     return issue;
   }
 
-  // getIssueByTitle(title: string): Issue {
-  //   return this.issueRepository.find((issue) => issue.title.includes(title));
-  // }
+  async updateContentById(id: number, content: string): Promise<Issue> {
+    const issue = await this.getIssueById(id);
 
-  // deleteIssueById(id: string): Issue[] {
-  //   const issue = this.getIssueById(id);
-  //   if (!issue) throw new NotFoundException(`Can't find Issue with id ${id}`);
-  //   return this.issues.filter((issue) => issue.id !== id);
-  // }
+    issue.content = content;
+    await this.issueRepository.save(issue);
 
-  // updateStatusById(id: string, status: IssueStatus): Issue {
-  //   const issue = this.getIssueById(id);
-  //   issue.status = status;
-  //   return issue;
-  // }
-
-  // updateContentById(id: string, content: string): Issue {
-  //   const issue = this.getIssueById(id);
-  //   issue.content = content;
-  //   return issue;
-  // }
+    return issue;
+  }
 }
