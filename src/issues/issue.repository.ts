@@ -7,12 +7,13 @@ import { IssueStatus } from './issues.enum';
 @CustomRepository(Issue)
 export class IssueRepository extends Repository<Issue> {
   async createIssue(createIssueDto: CreateIssueDto): Promise<Issue> {
-    const { title, content } = createIssueDto;
+    const { title, content, author } = createIssueDto;
 
     const issue = this.create({
       title,
       content,
       status: IssueStatus.OPEN,
+      author,
     });
 
     await this.save(issue);

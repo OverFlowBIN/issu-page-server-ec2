@@ -3,23 +3,35 @@ import { IssueStatus } from './issues.enum';
 import { CreateIssueDto } from './dto/create-issues.dto';
 import { IssueRepository } from './issue.repository';
 import { Issue } from './issue.entity';
+import { FindManyOptions } from 'typeorm';
 
 @Injectable()
 export class IssuesService {
   constructor(private issueRepository: IssueRepository) {}
 
   getAllissues() {
-    return this.issueRepository.find();
+    return this.issueRepository.find({
+      select: {
+        id: true,
+        title: true,
+        status: true,
+        author: true,
+      },
+    });
   }
 
   getAllissueByStatus(status: string): Promise<Issue[]> {
-    if (status === 'open') {
-      return this.issueRepository.find({ where: { status: IssueStatus.OPEN } });
-    } else if (status === 'close') {
-      return this.issueRepository.find({
-        where: { status: IssueStatus.CLOSE },
-      });
-    }
+    return this.issueRepository.find({
+      select: {
+        id: true,
+        title: true,
+        status: true,
+        author: true,
+      },
+      where: {
+        status: status === 'open' ? IssueStatus.OPEN : IssueStatus.CLOSE,
+      },
+    });
   }
 
   async createIssue(createIssueDto: CreateIssueDto): Promise<Issue> {
@@ -37,8 +49,18 @@ export class IssuesService {
     }
   }
 
-  async getIssueByTitle(title: string): Promise<Issue> {
-    return this.issueRepository.findOne({ where: { title } });
+  async getIssueByTitle(title: string): Promise<Issue[]> {
+    return this.issueRepository.find({
+      select: {
+        id: true,
+        title: true,
+        status: true,
+        author: true,
+      },
+      where: {
+        title,
+      },
+    });
   }
 
   async deleteIssueById(id: number) {
@@ -61,6 +83,15 @@ export class IssuesService {
     const issue = await this.getIssueById(id);
 
     issue.content = content;
+    await this.issueRepository.save(issue);
+
+    return issue;
+  }
+
+  async updateTitleById(id: number, title: string): Promise<Issue> {
+    const issue = await this.getIssueById(id);
+
+    issue.title = title;
     await this.issueRepository.save(issue);
 
     return issue;

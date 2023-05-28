@@ -14,4 +14,7 @@ export class Issue extends BaseEntity {
 
   @Column()
   status: IssueStatus;
+
+  @Column()
+  author: string;
 }

@@ -6,4 +6,7 @@ export class CreateIssueDto {
 
   @IsNotEmpty()
   content: string;
+
+  @IsNotEmpty()
+  author: string;
 }
