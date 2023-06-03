@@ -3,7 +3,6 @@ import { IssueStatus } from './issues.enum';
 import { CreateIssueDto } from './dto/create-issues.dto';
 import { IssueRepository } from './issue.repository';
 import { Issue } from './issue.entity';
-import { FindManyOptions } from 'typeorm';
 
 @Injectable()
 export class IssuesService {
@@ -16,6 +15,8 @@ export class IssuesService {
         title: true,
         status: true,
         author: true,
+        createdAt: true,
+        updatedAt: true,
       },
     });
   }

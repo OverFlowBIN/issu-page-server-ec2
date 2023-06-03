@@ -14,6 +14,8 @@ export class IssueRepository extends Repository<Issue> {
       content,
       status: IssueStatus.OPEN,
       author,
+      createdAt: Date(),
+      updatedAt: Date(),
     });
 
     await this.save(issue);

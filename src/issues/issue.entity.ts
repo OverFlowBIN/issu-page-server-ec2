@@ -17,4 +17,10 @@ export class Issue extends BaseEntity {
 
   @Column()
   author: string;
+
+  @Column()
+  createdAt: Date;
+
+  @Column()
+  updatedAt: Date;
 }
