@@ -27,7 +27,7 @@ export class Issue extends BaseEntity {
   @Column()
   createdAt: Date;
 
-  @ApiProperty({ description: '수정시간' })
+  @ApiProperty({ description: '제목' })
   @Column()
   updatedAt: Date;
 }

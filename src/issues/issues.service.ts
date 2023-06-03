@@ -3,6 +3,7 @@ import { IssueStatus } from './issues.enum';
 import { CreateIssueDto } from './dto/create-issues.dto';
 import { IssueRepository } from './issue.repository';
 import { Issue } from './issue.entity';
+import { Like } from 'typeorm';
 
 @Injectable()
 export class IssuesService {
@@ -59,7 +60,7 @@ export class IssuesService {
         author: true,
       },
       where: {
-        title,
+        title: Like(`%${title}%`),
       },
     });
   }

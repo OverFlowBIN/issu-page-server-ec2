@@ -21,6 +21,7 @@ import {
   ApiBody,
   ApiCreatedResponse,
   ApiOperation,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 
@@ -45,7 +46,7 @@ export class IssuesController {
   @ApiOperation({
     summary: '상태에 따른 Issue 가져오기',
   })
-  @ApiCreatedResponse({ type: Issue })
+  @ApiCreatedResponse({ type: Issue, isArray: true })
   getAllissueByStatus(@Param('status') status: string): Promise<Issue[]> {
     return this.issuesService.getAllissueByStatus(status);
   }
@@ -60,32 +61,59 @@ export class IssuesController {
     type: Issue,
     isArray: true,
   })
-  @UsePipes(ValidationPipe) // handler-level pipe 적용 시키기
   @ApiBody({ type: CreateIssueDto })
+  @UsePipes(ValidationPipe) // handler-level pipe 적용 시키기
   createIssue(@Body() createIssueDto: CreateIssueDto): Promise<Issue> {
     return this.issuesService.createIssue(createIssueDto);
   }
 
-  /** ID로 Issue 가져오기 */
+  /** id로 Issue detail 가져오기 */
   @Get('/id/:id')
+  @ApiOperation({
+    summary: 'id로 Issue detail 가져오기',
+  })
+  @ApiCreatedResponse({ description: 'id로 Issue detail 가져오기' })
   getIssueById(@Param('id') id: number): Promise<Issue> {
     return this.issuesService.getIssueById(id);
   }
 
   /** title로 Issue 가져오기 */
   @Get('/title/:title')
+  @ApiOperation({
+    summary: 'title로 Issue 가져오기',
+  })
+  @ApiCreatedResponse({
+    description: 'title로 Issue 가져오기',
+    type: Issue,
+    isArray: true,
+  })
   getIssueByTitle(@Param('title') title: string): Promise<Issue[]> {
     return this.issuesService.getIssueByTitle(title);
   }
 
   /** id로 Issue 삭제하기 */
   @Delete('/id/:id')
+  @ApiOperation({
+    summary: 'id로 Issue 삭제하기',
+  })
+  @ApiCreatedResponse({
+    description: 'id로 Issue 삭제하기',
+    type: Issue,
+  })
   deleteIssueById(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return this.issuesService.deleteIssueById(id);
   }
 
   /** id로 Issue status 변경하기 */
   @Patch('/status/:id')
+  @ApiOperation({
+    summary: 'id로 Issue status 변경하기',
+    description: 'status: OPEN -> CLOSE / status: CLOSE -> OPEN',
+  })
+  @ApiCreatedResponse({
+    description: 'id로 Issue status 변경하기',
+    type: Issue,
+  })
   updateStatusById(
     @Param('id', ParseIntPipe) id: number,
     @Body('status', IssueStatusValidationPipe) status: IssueStatus,
@@ -95,6 +123,13 @@ export class IssuesController {
 
   /** id로 Issue title 변경하기 */
   @Patch('title/:id')
+  @ApiOperation({
+    summary: 'id로 Issue title 변경하기',
+  })
+  @ApiCreatedResponse({
+    description: 'id로 Issue title 변경하기',
+    type: Issue,
+  })
   updateTitleById(
     @Param('id') id: number,
     @Body('content') content: string,
@@ -104,6 +139,13 @@ export class IssuesController {
 
   /** id로 Issue content 변경하기 */
   @Patch('/content/:id')
+  @ApiOperation({
+    summary: 'id로 Issue content 변경하기',
+  })
+  @ApiCreatedResponse({
+    description: 'id로 Issue content 변경하기',
+    type: Issue,
+  })
   updateContentById(
     @Param('id') id: number,
     @Body('content') content: string,
