@@ -4,11 +4,10 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 export const typeORMConfig: TypeOrmModuleOptions = {
   type: 'postgres',
-  host: 'issue.ctd4pq3bfhvs.ap-northeast-2.rds.amazonaws.com',
-  port: 5432,
+  host: '127.0.0.1',
   username: 'postgres',
   password: 'dudqls12',
-  database: 'postgres',
+  database: 'issue',
   entities: [__dirname + '/../**/*.entity.{js,ts}'],
   synchronize: true,
 };
