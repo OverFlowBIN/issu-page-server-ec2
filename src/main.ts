@@ -8,6 +8,11 @@ async function bootstrap() {
   /* init swagger */
   setupSwagger(app);
 
+  app.enableCors({
+    origin: true,
+    credentials: true,
+  });
+
   await app.listen(3000);
 }
 bootstrap().catch(console.error);
